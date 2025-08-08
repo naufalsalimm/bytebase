@@ -1,3 +1,4 @@
+#This file is for configuring an external database for Bytebase
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
