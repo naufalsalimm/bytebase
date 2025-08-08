@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bytebase-db
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: bytebase-db
+  serviceName: bytebase-db
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bytebase-db
+    spec:
+      containers:
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:latest
+          ports:
+            - containerPort: 5432
+              name: postgresql
+          env:
+            - name: POSTGRESQL_USERNAME
+              value: bytebase
+            - name: POSTGRESQL_PASSWORD
+              value: bytebase
+            - name: POSTGRESQL_DATABASE
+              value: bytebase
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 8Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bytebase-db
+  namespace: default
+  labels:
+    app: bytebase-db
+spec:
+  ports:
+    - port: 5432
+      name: postgresql
+  clusterIP: None
+  selector:
+    app: bytebase-db
