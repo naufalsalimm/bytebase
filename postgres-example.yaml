@@ -1,4 +1,28 @@
-#This file is for configuring an external database for Bytebase
+#This file is for configuring a database for Bytebase
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/postgres   # direktori di node
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: postgres-pv   # bind langsung ke PV di atas
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -17,7 +41,7 @@ spec:
     spec:
       containers:
         - name: postgresql
-          image: docker.io/bitnami/postgresql:latest
+          image: docker.io/bitnami/postgresql:15
           ports:
             - containerPort: 5432
               name: postgresql
@@ -29,16 +53,12 @@ spec:
             - name: POSTGRESQL_DATABASE
               value: bytebase
           volumeMounts:
-            - name: data
-              mountPath: /bitnami/postgresql
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 8Gi
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+  volumes:
+  - name: postgres-storage
+    persistentVolumeCLaim:
+      claimName: postgres-pvc
 ---
 apiVersion: v1
 kind: Service
