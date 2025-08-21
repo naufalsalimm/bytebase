@@ -70,6 +70,6 @@ spec:
   ports:
     - port: 5432
       name: postgresql
-  clusterIP: None
+#  clusterIP: None
   selector:
     app: bytebase-db
