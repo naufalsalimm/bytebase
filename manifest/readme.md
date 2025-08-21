@@ -3,7 +3,7 @@
 ``` bash
 sudo ls /data/postgresql/
 ```
--on Pod
+- on Pod
 ``` bash
 ls /var/lib/postgresql/data 
 ```
