@@ -45,10 +45,11 @@ metadata:
   namespace: default
 spec:
   # Optional
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: bytebase
   ports:
     - protocol: TCP
       port: 80
       targetPort: 8080
+      nodePort: 31895
