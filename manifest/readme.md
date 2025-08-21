@@ -1,4 +1,9 @@
-### Check Data Dir in Pod
+### Check Data Dir
+- on Host
+``` bash
+sudo ls /data/postgresql/
+```
+-on Pod
 ``` bash
 ls /var/lib/postgresql/data 
 ```
