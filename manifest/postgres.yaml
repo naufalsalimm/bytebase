@@ -1,64 +1,63 @@
-#This file is for configuring a database for Bytebase
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: postgres-pv
+  name: postgres-volume
+  labels:
+    type: local
+    app: postgres
 spec:
+  storageClassName: manual
   capacity:
-    storage: 5Gi
+    storage: 10Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   hostPath:
-    path: /data/postgres   # direktori di node
+    path: /data/postgresql
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: postgres-volume-claim
+  labels:
+    app: postgres
 spec:
+  storageClassName: manual
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 5Gi
-  volumeName: postgres-pv   # bind langsung ke PV di atas
+      storage: 10Gi
 ---
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: bytebase-db
-  namespace: default
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: bytebase-db
-  serviceName: bytebase-db
-  replicas: 1
   template:
     metadata:
       labels:
         app: bytebase-db
     spec:
       containers:
-        - name: postgresql
-          image: docker.io/bitnami/postgresql:15
+        - name: postgres
+          image: 'postgres:14'
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
-              name: postgresql
-          env:
-            - name: POSTGRESQL_USERNAME
-              value: bytebase
-            - name: POSTGRESQL_PASSWORD
-              value: bytebase
-            - name: POSTGRESQL_DATABASE
-              value: bytebase
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
           volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
+            - mountPath: /var/lib/postgresql/data
+              name: postgresdata
       volumes:
-      - name: postgres-storage
-        persistentVolumeClaim:
-          claimName: postgres-pvc
+        - name: postgresdata
+          persistentVolumeClaim:
+            claimName: postgres-volume-claim
 ---
 apiVersion: v1
 kind: Service
