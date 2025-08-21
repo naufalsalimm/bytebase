@@ -22,7 +22,7 @@ spec:
           # https://www.bytebase.com/docs/get-started/install/external-postgres
           env:
             - name: PG_URL
-              value: 'postgresql://bytebase:bytebase@bytebase-db.default.svc.cluster.local:5432/bytebase'
+              value: 'postgresql://postgres:postgres@bytebase-db.default.svc.cluster.local:5432/postgres'
           args:
             [
               '--port',
