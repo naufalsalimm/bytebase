@@ -11,4 +11,5 @@ ls /var/lib/postgresql/data
 ``` bash
 psql -U postgres --password -p 5432 postgres
 ```
-[References](https://www.digitalocean.com/community/tutorials/how-to-deploy-postgres-to-kubernetes-cluster)
+[Postgres Installation](https://www.digitalocean.com/community/tutorials/how-to-deploy-postgres-to-kubernetes-cluster)
+[Bytebase Installation](https://docs.bytebase.com/get-started/self-host/deploy-with-kubernetes)
