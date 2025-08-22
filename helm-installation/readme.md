@@ -13,3 +13,4 @@ helm install bytebase-db bitnami/postgresql \
   --set primary.persistence.enabled=true \
   --set primary.persistence.size=8Gi
 ```
+[References](https://artifacthub.io/packages/helm/bytebase/bytebase)
